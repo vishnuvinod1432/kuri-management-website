@@ -1,0 +1,42 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Collection — Kuri Management Demo{% endblock %}
+{% block page_title %}Collection Overview{% endblock %}
+
+{% block content %}
+<div class="grid grid-2" style="margin-bottom:20px;">
+  <div class="card stat-card">
+    <div class="stat-icon bg-green-soft">📈</div>
+    <div class="stat-label">Total Collected (All Months)</div>
+    <div class="stat-value">₹{{ total_collected|floatformat:0 }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-amber-soft">⏳</div>
+    <div class="stat-label">Total Pending (All Months)</div>
+    <div class="stat-value">₹{{ total_pending|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card card-pad">
+  <div class="section-title">Month-wise Collection</div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Month</th><th>Members Paid</th><th>Collected</th><th>Pending</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for row in monthly_summary %}
+        <tr>
+          <td>Month {{ row.month }}</td>
+          <td>{{ row.paid_count }} / {{ kuri.total_members }}</td>
+          <td>₹{{ row.collected|floatformat:0 }}</td>
+          <td>₹{{ row.pending|floatformat:0 }}</td>
+          <td>
+            {% if row.is_future %}<span class="badge badge-future">Upcoming</span>
+            {% elif row.pending == 0 %}<span class="badge badge-paid">Fully Collected</span>
+            {% else %}<span class="badge badge-pending">In Progress</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

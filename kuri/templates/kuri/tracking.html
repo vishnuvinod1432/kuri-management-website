@@ -1,0 +1,60 @@
+{% extends 'kuri/base.html' %}
+{% block title %}40-Month Tracking — Kuri Management Demo{% endblock %}
+{% block page_title %}40-Month Tracking{% endblock %}
+
+{% block content %}
+<div class="card card-pad">
+  <div class="section-head">
+    <div class="section-title" style="margin:0;">Click any month cell to cycle its status (Paid → Pending → Overdue → Future)</div>
+    <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);">
+      <span><span class="badge badge-paid">✓</span> Paid</span>
+      <span><span class="badge badge-pending">✗</span> Pending</span>
+      <span><span class="badge badge-overdue">⚠</span> Overdue</span>
+      <span><span class="badge badge-future">-</span> Future</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table tracking-table">
+      <thead>
+        <tr>
+          <th class="member-freeze-col">Member</th>
+          {% for m in months %}<th>M{{ m }}</th>{% endfor %}
+          <th>Paid ₹</th><th>Pending ₹</th><th>Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in grid %}
+        <tr>
+          <td class="member-freeze-col">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="avatar" style="background:{{ row.member.avatar_color }};width:28px;height:28px;font-size:11px;">{{ row.member.initials }}</div>
+              <div>
+                <div style="font-weight:600;font-size:12.5px;">{{ row.member.name }}</div>
+                <div style="color:var(--muted);font-size:11px;">{{ row.member.member_id }}</div>
+              </div>
+            </div>
+          </td>
+          {% for payment in row.cells %}
+            {% if payment %}
+            <td class="cell-status cell-{{ payment.status }}" data-payment-id="{{ payment.pk }}" data-status="{{ payment.status }}" title="Month {{ payment.month_number }} — {{ payment.get_status_display }}">
+              {% if payment.status == 'paid' %}✓{% elif payment.status == 'future' %}-{% else %}✗{% endif %}
+            </td>
+            {% else %}
+            <td>—</td>
+            {% endif %}
+          {% endfor %}
+          <td data-member-total-paid>₹{{ row.member.total_paid|floatformat:0 }}</td>
+          <td data-member-total-pending>₹{{ row.member.total_pending|floatformat:0 }}</td>
+          <td style="min-width:100px;">
+            <div class="progress"><div class="progress-bar" data-member-progress style="width:{{ row.member.payment_progress_percent }}%;"></div></div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="100"><div class="empty-state">No members yet. Add members to see the tracking grid.</div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

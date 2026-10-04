@@ -1,0 +1,35 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Settings — Kuri Management Demo{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="card card-pad" style="max-width:700px;">
+  <div class="section-title">Kuri Scheme Settings</div>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Kuri Name</label>
+      <input type="text" name="name" class="form-control" value="{{ kuri.name }}">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Current Month</label>
+        <input type="number" name="current_month" min="1" max="{{ kuri.duration_months }}" class="form-control" value="{{ kuri.current_month }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status" class="form-control">
+          <option value="active" {% if kuri.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="paused" {% if kuri.status == 'paused' %}selected{% endif %}>Paused</option>
+          <option value="closed" {% if kuri.status == 'closed' %}selected{% endif %}>Closed</option>
+        </select>
+      </div>
+    </div>
+    <div style="color:var(--muted);font-size:12.5px;margin-bottom:14px;">
+      Duration ({{ kuri.duration_months }} months), monthly contribution (₹{{ kuri.monthly_contribution|floatformat:0 }})
+      and member count ({{ kuri.total_members }}) are fixed for this demo scheme.
+    </div>
+    <button type="submit" class="btn btn-primary">Save Settings</button>
+  </form>
+</div>
+{% endblock %}

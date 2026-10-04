@@ -1,0 +1,64 @@
+{% extends 'kuri/base.html' %}
+{% block title %}{% if mode == 'add' %}Add Member{% else %}Edit Member{% endif %} — Kuri Management Demo{% endblock %}
+{% block page_title %}{% if mode == 'add' %}Add Member{% else %}Edit Member{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card card-pad" style="max-width:700px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Member ID</label>
+        {{ form.member_id }}
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        {{ form.name }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone</label>
+        {{ form.phone }}
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        {{ form.email }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date of Birth</label>
+        {{ form.date_of_birth }}
+      </div>
+      <div class="form-group">
+        <label>Joining Date</label>
+        {{ form.joining_date }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      {{ form.address }}
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Monthly Amount</label>
+        {{ form.monthly_amount }}
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:8px;margin-top:22px;">
+        {{ form.is_active }}
+        <label style="margin:0;">Active member</label>
+      </div>
+    </div>
+
+    {% if form.errors %}
+      <div class="alert alert-error">Please correct the errors below and try again.</div>
+    {% endif %}
+
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button type="submit" class="btn btn-primary">{% if mode == 'add' %}Add Member{% else %}Save Changes{% endif %}</button>
+      <a href="{% url 'members' %}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

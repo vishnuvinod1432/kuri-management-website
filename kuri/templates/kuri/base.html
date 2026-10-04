@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Kuri Management Demo{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'kuri/css/style.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-title">Kuri Management</div>
+      <div class="brand-sub">DEMO PROJECT — NOT KSFE</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{% url 'dashboard' %}" class="{% if active_page == 'dashboard' %}active{% endif %}"><span class="icon">📊</span> Dashboard</a>
+      <a href="{% url 'members' %}" class="{% if active_page == 'members' %}active{% endif %}"><span class="icon">👥</span> Members</a>
+      <a href="{% url 'payments' %}" class="{% if active_page == 'payments' %}active{% endif %}"><span class="icon">💳</span> Payments</a>
+      <a href="{% url 'tracking' %}" class="{% if active_page == 'tracking' %}active{% endif %}"><span class="icon">🗓️</span> 40-Month Tracking</a>
+      <a href="{% url 'collection' %}" class="{% if active_page == 'collection' %}active{% endif %}"><span class="icon">💰</span> Collection</a>
+      <a href="{% url 'notifications' %}" class="{% if active_page == 'notifications' %}active{% endif %}"><span class="icon">🔔</span> Notifications</a>
+      <a href="{% url 'admin_profile' %}" class="{% if active_page == 'profile' %}active{% endif %}"><span class="icon">🧑‍💼</span> Admin Profile</a>
+      <a href="{% url 'settings' %}" class="{% if active_page == 'settings' %}active{% endif %}"><span class="icon">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-foot">
+      Fictional demo data only.<br>Not affiliated with KSFE.
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
+        <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-user">
+          <div class="avatar" style="background:#5b5ff7;width:32px;height:32px;font-size:12px;">VK</div>
+          <span>{{ request.user.username|default:"admin" }}</span>
+        </div>
+        <a href="{% url 'logout' %}" class="btn btn-outline btn-sm">Logout</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="disclaimer-banner">
+        ⚠️ <strong>Kuri Management Demo</strong> — a fictional educational project with fake data. This is not an official KSFE website.
+      </div>
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+{% for message in messages %}
+  <div data-server-message="{{ message }}" data-message-type="{% if message.tags == 'error' %}error{% else %}success{% endif %}" style="display:none;"></div>
+{% endfor %}
+
+<script src="{% static 'kuri/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

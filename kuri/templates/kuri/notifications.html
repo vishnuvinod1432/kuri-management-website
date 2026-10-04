@@ -1,0 +1,30 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Notifications — Kuri Management Demo{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="card card-pad">
+  {% if notifications %}
+    {% for note in notifications %}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-weight:700;font-size:14px;">
+          {{ note.title }}
+          {% if not note.is_read %}<span class="badge badge-pending" style="margin-left:6px;">New</span>{% endif %}
+        </div>
+        <div style="color:var(--muted);font-size:13px;margin-top:3px;">{{ note.message }}</div>
+        <div style="color:var(--grey);font-size:11.5px;margin-top:5px;">{{ note.created_at }} &nbsp;•&nbsp; {{ note.get_notification_type_display }}</div>
+      </div>
+      {% if not note.is_read %}
+      <form method="post" action="{% url 'notification_mark_read' note.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline btn-sm">Mark read</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">No notifications.</div>
+  {% endif %}
+</div>
+{% endblock %}

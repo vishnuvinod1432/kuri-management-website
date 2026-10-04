@@ -1,0 +1,72 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Members — Kuri Management Demo{% endblock %}
+{% block page_title %}Members{% endblock %}
+
+{% block content %}
+<div class="card card-pad">
+  <div class="filter-bar">
+    <form method="get" style="display:flex;gap:12px;flex-wrap:wrap;flex:1;">
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" name="q" class="form-control" placeholder="Search by name, ID, phone, email" value="{{ query }}">
+      </div>
+      <select name="status" class="form-control" onchange="this.form.submit()">
+        <option value="" {% if status_filter == '' %}selected{% endif %}>All Status</option>
+        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+      </select>
+      <select name="sort" class="form-control" onchange="this.form.submit()">
+        <option value="member_id" {% if sort_by == 'member_id' %}selected{% endif %}>Sort: Member ID</option>
+        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Sort: Name</option>
+        <option value="joining_date" {% if sort_by == 'joining_date' %}selected{% endif %}>Sort: Joining Date (old-new)</option>
+        <option value="-joining_date" {% if sort_by == '-joining_date' %}selected{% endif %}>Sort: Joining Date (new-old)</option>
+      </select>
+      <button type="submit" class="btn btn-outline">Apply</button>
+    </form>
+    <a href="{% url 'member_add' %}" class="btn btn-primary">+ Add Member</a>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Member</th><th>Phone</th><th>Joined</th><th>Monthly Amt</th>
+          <th>Paid</th><th>Pending</th><th>Progress</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in members %}
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="avatar" style="background:{{ member.avatar_color }};">{{ member.initials }}</div>
+              <div>
+                <div style="font-weight:600;">{{ member.name }}</div>
+                <div style="color:var(--muted);font-size:12px;">{{ member.member_id }}</div>
+              </div>
+            </div>
+          </td>
+          <td>{{ member.phone }}</td>
+          <td>{{ member.joining_date }}</td>
+          <td>₹{{ member.monthly_amount|floatformat:0 }}</td>
+          <td>₹{{ member.total_paid|floatformat:0 }}</td>
+          <td>₹{{ member.total_pending|floatformat:0 }}</td>
+          <td style="min-width:100px;">
+            <div class="progress"><div class="progress-bar" style="width:{{ member.payment_progress_percent }}%;"></div></div>
+          </td>
+          <td>
+            {% if member.is_active %}<span class="badge badge-active">Active</span>
+            {% else %}<span class="badge badge-inactive">Inactive</span>{% endif %}
+          </td>
+          <td>
+            <a href="{% url 'member_detail' member.pk %}" class="btn btn-outline btn-sm">View</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9"><div class="empty-state">No members found.</div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

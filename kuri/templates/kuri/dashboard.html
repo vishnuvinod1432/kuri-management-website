@@ -1,0 +1,110 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Dashboard — Kuri Management Demo{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="card card-pad" style="margin-bottom:20px;">
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:center;">
+    <div>
+      <div class="section-title" style="margin-bottom:4px;">{{ kuri.name }}</div>
+      <div style="color:var(--muted);font-size:13px;">
+        Duration: {{ kuri.duration_months }} months &nbsp;•&nbsp;
+        Monthly contribution: ₹{{ kuri.monthly_contribution|floatformat:0 }} &nbsp;•&nbsp;
+        Current month: {{ kuri.current_month }} / {{ kuri.duration_months }} &nbsp;•&nbsp;
+        Remaining: {{ kuri.remaining_months }} months
+      </div>
+    </div>
+    <span class="badge badge-active">{{ kuri.get_status_display }}</span>
+  </div>
+</div>
+
+<div class="grid grid-4" style="margin-bottom:20px;">
+  <div class="card stat-card">
+    <div class="stat-icon bg-primary-soft">👥</div>
+    <div class="stat-label">Total Members</div>
+    <div class="stat-value">{{ total_members }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-primary-soft">💵</div>
+    <div class="stat-label">Monthly Amount</div>
+    <div class="stat-value">₹{{ kuri.expected_monthly_collection|floatformat:0 }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-green-soft">✓</div>
+    <div class="stat-label">Paid This Month</div>
+    <div class="stat-value">{{ paid_this_month }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-red-soft">✗</div>
+    <div class="stat-label">Pending This Month</div>
+    <div class="stat-value">{{ pending_this_month }}</div>
+  </div>
+</div>
+
+<div class="grid grid-4" style="margin-bottom:20px;">
+  <div class="card stat-card">
+    <div class="stat-icon bg-green-soft">📈</div>
+    <div class="stat-label">Total Collected</div>
+    <div class="stat-value">₹{{ total_collected|floatformat:0 }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-amber-soft">⏳</div>
+    <div class="stat-label">Total Pending</div>
+    <div class="stat-value">₹{{ total_pending|floatformat:0 }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-green-soft">🟢</div>
+    <div class="stat-label">Active Members</div>
+    <div class="stat-value">{{ active_members }}</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon bg-red-soft">🔴</div>
+    <div class="stat-label">Inactive Members</div>
+    <div class="stat-value">{{ inactive_members }}</div>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card card-pad">
+    <div class="section-title">Monthly Collection</div>
+    <canvas id="collectionChart" height="220"></canvas>
+  </div>
+  <div class="card card-pad">
+    <div class="section-title">Recent Notifications</div>
+    {% if recent_notifications %}
+      {% for note in recent_notifications %}
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="font-weight:600;font-size:13.5px;">{{ note.title }}</div>
+          <div style="color:var(--muted);font-size:12.5px;">{{ note.message }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">No notifications yet.</div>
+    {% endif %}
+    <a href="{% url 'notifications' %}" class="btn btn-outline btn-sm" style="margin-top:12px;">View all</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ctx = document.getElementById('collectionChart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: {{ chart_labels|safe }},
+    datasets: [{
+      label: 'Collected (₹)',
+      data: {{ chart_values|safe }},
+      backgroundColor: '#5b5ff7',
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}

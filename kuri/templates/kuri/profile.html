@@ -1,0 +1,33 @@
+{% extends 'kuri/base.html' %}
+{% block title %}Admin Profile — Kuri Management Demo{% endblock %}
+{% block page_title %}Admin Profile{% endblock %}
+
+{% block content %}
+<div class="card card-pad" style="margin-bottom:20px;max-width:700px;">
+  <div class="profile-header">
+    <div class="avatar avatar-lg" style="background:#5b5ff7;">{{ profile.name|slice:":2"|upper }}</div>
+    <div class="profile-info">
+      <h2>{{ profile.name }}</h2>
+      <div class="muted">{{ profile.role }}</div>
+      <div class="muted">{{ profile.location }}</div>
+      <div class="muted">{{ request.user.email }} &nbsp;•&nbsp; {{ profile.phone }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-pad" style="max-width:700px;">
+  <div class="section-title">Edit Profile</div>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group"><label>Name</label>{{ form.name }}</div>
+      <div class="form-group"><label>Role</label>{{ form.role }}</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Location</label>{{ form.location }}</div>
+      <div class="form-group"><label>Phone</label>{{ form.phone }}</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </form>
+</div>
+{% endblock %}
