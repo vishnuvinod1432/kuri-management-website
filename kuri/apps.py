@@ -14,7 +14,7 @@ class KuriConfig(AppConfig):
 
         from django.contrib.auth import get_user_model
 
-        def create_admin(sender, **kwargs):
+        def create_or_update_admin(sender, **kwargs):
 
             User = get_user_model()
 
@@ -30,8 +30,20 @@ class KuriConfig(AppConfig):
             if not password:
                 return
 
-            if not User.objects.filter(username=username).exists():
+            user = User.objects.filter(username=username).first()
 
+            if user:
+                user.set_password(password)
+                user.is_staff = True
+                user.is_superuser = True
+                user.save(
+                    update_fields=[
+                        'password',
+                        'is_staff',
+                        'is_superuser'
+                    ]
+                )
+            else:
                 User.objects.create_superuser(
                     username=username,
                     email='admin@example.com',
@@ -39,7 +51,7 @@ class KuriConfig(AppConfig):
                 )
 
         post_migrate.connect(
-            create_admin,
+            create_or_update_admin,
             sender=self,
-            dispatch_uid='kuri.create_admin'
+            dispatch_uid='kuri.create_or_update_admin'
         )
