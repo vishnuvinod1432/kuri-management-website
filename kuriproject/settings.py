@@ -37,7 +37,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'kuriproject.urls'
-
+LOGIN_URL = '/login/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
